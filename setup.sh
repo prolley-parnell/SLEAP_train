@@ -36,14 +36,20 @@ rsync --archive --update --compress --progress ${afs_src}/ ${dfs_dst}
 echo "${afs_src}/ up to date with ${dfs_dst}"
 
 #Install SLEAP through conda
-mamba create -y -n sleap -c conda-forge -c nvidia -c sleap -c anaconda sleap=1.3.3
+source ~/.bashrc
+TMPDIR="${project_path}/tmp"
+TMP="${TMPDIR}"
+TEMP="${TMPDIR}"
+mkdir -p "${TMPDIR}"
+export TMPDIR TMP TEMP
+conda create -y -n sleap -c conda-forge -c nvidia -c sleap -c anaconda sleap=1.3.3
 conda deactivate
 
 
 #Ensure that you can use the "run_experiments" wrapper
 #echo 'export PATH=/home/$USER/cluster-scripts/experiments:$PATH' >> ~/.bashrc
 if [ -f "${dfs_dst}/input.tar.bz2" ]; then
-  tar --exclude="._*" -xjvf "${dfs_dst}/input.tar.bz2" -C "${dfs_dst}/"
+  tar --exclude="._*" -xjvf "${dfs_dst}/input.tar.bz2" -C "${project_path}/data"
 else
   echo "Could not find '${dfs_dst}/input.tar.bz2'"
 fi
