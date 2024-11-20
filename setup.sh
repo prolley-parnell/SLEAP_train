@@ -16,7 +16,7 @@ if [ ! -d "${afs_project_path}" ]; then
 fi
 
 #If there is no data/input folder in the project folder, then make it.
-afs_src="${afs_project_path}/data/input"
+afs_src="${afs_project_path}/data"
 
 if [ ! -d ${afs_src} ]; then
   mkdir -p ${afs_src}
