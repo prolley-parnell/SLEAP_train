@@ -37,14 +37,17 @@ echo "${afs_src}/ up to date with ${dfs_dst}"
 
 #Install SLEAP through conda
 source ~/.bashrc
-TMPDIR="${project_path}/tmp"
-TMP="${TMPDIR}"
-TEMP="${TMPDIR}"
-mkdir -p "${TMPDIR}"
-export TMPDIR TMP TEMP
-conda create -y -n sleap -c conda-forge -c nvidia -c sleap -c anaconda sleap=1.3.3
-conda deactivate
 
+if { ! conda env list | grep 'sleap'; } >/dev/null 2>&1; then
+  TMPDIR="${project_path}/tmp"
+  TMP="${TMPDIR}"
+  TEMP="${TMPDIR}"
+  mkdir -p "${TMPDIR}"
+  export TMPDIR TMP TEMP
+  conda create -y -n sleap -c conda-forge -c nvidia -c sleap -c anaconda sleap=1.3.3
+  conda deactivate
+  rm -rf ${TMPDIR}
+fi
 
 #Ensure that you can use the "run_experiments" wrapper
 #echo 'export PATH=/home/$USER/cluster-scripts/experiments:$PATH' >> ~/.bashrc
