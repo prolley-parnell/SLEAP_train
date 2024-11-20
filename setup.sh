@@ -1,3 +1,4 @@
+#!/bin/sh
 #Run this from device connected to drive with data
 USER=$1 #sXXXXXXX
 input_folder=$2 #Path to the /data folder that contains an input directory that is not zipped
