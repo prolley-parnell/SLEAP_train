@@ -1,8 +1,9 @@
 #!/bin/sh
 PROJECT_NAME=sleap
+project_path=/home/${USER}/${PROJECT_NAME}
 afs_src=/afs/inf.ed.ac.uk/user/s20/${USER}/${PROJECT_NAME}/data/input #s20 is the first two digits of the student number given in $USER
 
-echo "You are cleaning up, this will delete any files left in the disk scratch spaces after running rsync"
+echo "You are cleaning up, this will delete any output files left in the disk scratch spaces after running rsync"
 echo "Do you wish to continue? [y/n]"
 
 read response < /dev/tty
