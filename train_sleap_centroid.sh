@@ -38,9 +38,6 @@
 # Maximum number of nodes to use for the job
 #SBATCH --nodes=1
 
-#Number of tasks
-#SBATCH -n=1
-
 # Generic resources to use - typically you'll want gpu:n to get n gpus
 #SBATCH --gres=gpu:1
 
