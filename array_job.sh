@@ -155,7 +155,7 @@ echo "${src_path}/ is up to date with ${dst_path}"
 # inclusive.
 src_path=${SCRATCH_HOME}/${project_name}/data/input
 dst_path=${SCRATCH_HOME}/${project_name}/data/output
-models_path=/home/${USER}/${project_name}/data/models
+models_path=${SCRATCH_HOME}/${project_name}/data/models
 
 mkdir -p ${dst_path}
 
