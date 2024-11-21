@@ -150,7 +150,7 @@ mkdir -p ${dst_path}
 
 
 echo "Starting Training SLEAP"
-sleap-train   --run_name cluster_test_C_1  "${src_path}/centroid_config.json" "${src_path}/labels.v004.pkg.slp"
+sleap-train   --run_name cluster_test_C_1  "centroid_config.json" "${src_path}/labels.v004.pkg.slp"
 echo "Command ran successfully!"
 
 
@@ -162,8 +162,9 @@ echo "Command ran successfully!"
 
 echo "Moving output data back to DFS"
 
-src_path=${SCRATCH_HOME}/${project_name}/data/output
-dst_path=/home/${USER}/${project_name}/data/output
+src_path=${SCRATCH_HOME}/${project_name}/data/models
+dst_path=/home/${USER}/${project_name}/data/models
+mkdir -p ${dst_path}
 rsync --archive --update --compress --progress ${src_path}/ ${dst_path}
 
 

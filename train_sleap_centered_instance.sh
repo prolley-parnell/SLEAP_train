@@ -150,7 +150,7 @@ mkdir -p ${dst_path}
 
 
 echo "Starting Training SLEAP"
-sleap-train   --run_name cluster_test_CI_1  "${src_path}/centered_instance_config.json" "${src_path}/labels.v004.pkg.slp"
+sleap-train   --run_name cluster_test_CI_1  "centered_instance_config.json" "${src_path}/labels.v004.pkg.slp"
 echo "Command ran successfully!"
 
 
@@ -161,9 +161,12 @@ echo "Command ran successfully!"
 # example, send it back to the DFS with rsync
 
 echo "Moving output data back to DFS"
-
-src_path=${SCRATCH_HOME}/${project_name}/data/output
-dst_path=/home/${USER}/${project_name}/data/output
+#This shouldn't be required if using the config files provided
+#Change the outputs->runs_folder in the json to change the location to which the model is saved.
+#It appears under the name specified in --run_name
+src_path=${SCRATCH_HOME}/${project_name}/data/models
+dst_path=/home/${USER}/${project_name}/data/models
+mkdir -p ${dst_path}
 rsync --archive --update --compress --progress ${src_path}/ ${dst_path}
 
 
