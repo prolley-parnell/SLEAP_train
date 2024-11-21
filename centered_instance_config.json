@@ -1500,7 +1500,7 @@
             "leap": null,
             "unet": {
                 "stem_stride": null,
-                "max_stride": 64,
+                "max_stride": 16,
                 "output_stride": 4,
                 "filters": 24,
                 "filters_rate": 1.5,
