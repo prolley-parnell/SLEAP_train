@@ -1,8 +1,9 @@
 #USER=$1 #sXXXXXXXX
 PROJECT_NAME=sleap
 afs_src=/afs/inf.ed.ac.uk/user/s20/${USER}/${PROJECT_NAME}/data/input #s20 is the first two digits of the student number given in $USER
+afs_model_src=/afs/inf.ed.ac.uk/user/s20/${USER}/${PROJECT_NAME}/data/models #s20 is the first two digits of the student number given in $USER
 
-echo "You are on branch `dfs` so are setting up the DFS."
+echo "You are on branch dfs so are setting up the DFS."
 echo "Press Ctrl+C if this is not correct and switch to the correct branch."
 
 #Install miniconda if it is not already installed
@@ -34,6 +35,19 @@ fi
 rsync --archive --update --compress --progress ${afs_src}/ ${dfs_dst}
 
 echo "${afs_src}/ up to date with ${dfs_dst}"
+
+# --- Move models from AFS --- #
+dfs_model_dst="${project_path}/data/models"
+
+#Make the model input path if it is not present
+if [ ! -d ${dfs_model_dst} ]; then
+  mkdir -p ${dfs_model_dst}
+fi
+
+#Synchronise the folders and move the AFS models to DFS models
+rsync --archive --update --compress --progress ${afs_model_src}/ ${dfs_model_dst}
+
+echo "${afs_model_src}/ up to date with ${dfs_model_dst}"
 
 #Install SLEAP through conda
 source ~/.bashrc
