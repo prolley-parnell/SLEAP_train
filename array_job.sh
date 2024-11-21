@@ -133,8 +133,18 @@ mkdir -p ${dst_path}  # make it if required
 
 rsync --archive --update --compress --progress ${src_path}/ ${dst_path}
 echo "${src_path}/ is up to date with ${dst_path}"
-#Extract the input tar containing all the video - This occurs outside of the parallel jobs now.
-#tar --exclude="._*" -xjf "${dst_path}/input.tar.bz2" -C "${dst_path}/"
+
+#Move the model folders across too
+# model data directory path on the DFS
+src_path=/home/${USER}/${project_name}/data/models
+
+# model data directory path on the scratch disk of the node
+dst_path=${SCRATCH_HOME}/${project_name}/data/models
+mkdir -p ${dst_path}  # make it if required
+
+rsync --archive --update --compress --progress ${src_path}/ ${dst_path}
+echo "${src_path}/ is up to date with ${dst_path}"
+
 
 # ==============================
 # Finally, run the experiment!

@@ -148,9 +148,9 @@ dst_path=${SCRATCH_HOME}/${project_name}/data/output
 
 mkdir -p ${dst_path}
 
-
+dt=$(date '+%d%m%Y_%H%M%S')
 echo "Starting Training SLEAP"
-sleap-train   --run_name cluster_test_CI_1  "centered_instance_config.json" "${src_path}/labels.v004.pkg.slp"
+sleap-train   --run_name "${dt}_CI"  "centered_instance_config.json" "${src_path}/labels.v004.pkg.slp"
 echo "Command ran successfully!"
 
 
