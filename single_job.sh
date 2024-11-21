@@ -2,14 +2,15 @@
 file_name=$1 #YYMMDD-HHMM_camX_fruit_sessionY
 scratch_input=$2 #src_path=${SCRATCH_HOME}/${PROJECT_NAME}/data/input
 scratch_output=$3 #dest_path=${SCRATCH_HOME}/${PROJECT_NAME}/data/output
+models_path=$4 #${DFS_HOME}/${PROJECT_NAME}/data/models
 
 sleap-track \
--m "${scratch_input}/240915_163345.centroid.n=532" \
--m "${scratch_input}/240915_172626.centered_instance.n=532" \
+-m "${models_path}/21112024_1200_C" \
+-m "${models_path}/21112024_1200_CI" \
 -o "${scratch_output}/${file_name}.predictions.slp" \
 --no-empty-frames \
 --verbosity rich \
---batch_size 4 \
+--batch_size 16 \
 --peak_threshold 0.3 \
 --tracking.tracker simple \
 "${scratch_input}/${file_name}.mp4"

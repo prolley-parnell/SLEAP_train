@@ -155,6 +155,7 @@ echo "${src_path}/ is up to date with ${dst_path}"
 # inclusive.
 src_path=${SCRATCH_HOME}/${project_name}/data/input
 dst_path=${SCRATCH_HOME}/${project_name}/data/output
+models_path=/home/${USER}/${project_name}/data/models
 
 mkdir -p ${dst_path}
 
@@ -162,7 +163,7 @@ experiment_text_file=$1
 data_file="`sed \"${SLURM_ARRAY_TASK_ID}q;d\" ${experiment_text_file}`"
 
 echo "Analysing ${data_file}"
-bash single_job.sh ${data_file} ${src_path} ${dst_path}
+bash single_job.sh ${data_file} ${src_path} ${dst_path} ${models_path}
 echo "Command ran successfully!"
 
 
