@@ -14,3 +14,12 @@ fi
 
 rsync --archive --update --compress --progress ${output_src}/ ${output_dst}
 
+output_model_dst="${data_folder}/${PROJECT_NAME}/data/models"
+output_model_src="${afs_project_path}/data/models"
+
+#Make the project path locally if it does not exist already
+if [ ! -d "${output_model_dst}" ]; then
+  mkdir -p ${output_model_dst}
+fi
+
+rsync --archive --update --compress --progress ${output_model_src}/ ${output_model_dst}
