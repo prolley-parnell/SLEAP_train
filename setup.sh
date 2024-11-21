@@ -16,15 +16,15 @@ if [ ! -d "${afs_project_path}" ]; then
 fi
 
 #If there is no data/input folder in the project folder, then make it.
-afs_src="${afs_project_path}/data/input"
+afs_dst="${afs_project_path}/data/input"
 
-if [ ! -d ${afs_src} ]; then
-  mkdir -p ${afs_src}
+if [ ! -d ${afs_dst} ]; then
+  mkdir -p ${afs_dst}
 fi
 
 if [ ! -f "${input_folder}/input.tar.bz2" ]; then
   cd ${input_folder}
   tar --no-xattrs --exclude="._*" -cjf input.tar.bz2 input
-  mv input.tar.bz2 ${afs_src}
+  mv input.tar.bz2 ${afs_dst}
 fi
 
