@@ -54,7 +54,7 @@
 #SBATCH --partition=PGR-Standard
 
 # Any nodes to exclude from selection
-#SBATCH --exclude=damnii[02, 03]
+#SBATCH --exclude=damnii[01-12]
 
 
 # =====================
