@@ -25,3 +25,19 @@ rsync --archive --update --compress --progress ${dfs_src}/ ${afs_dst}
 echo "${dfs_src}/ up to date with ${afs_dst}"
 
 rm -rf ${dfs_src}
+
+## ------ move model files across ------ ##
+dfs_src="${project_path}/data/models"
+afs_dst="/afs/inf.ed.ac.uk/user/s20/${USER}/${PROJECT_NAME}/data/models"
+
+
+#Make the data output path if it is not present
+if [ ! -d ${afs_dst} ]; then
+  mkdir -p ${afs_dst}
+fi
+
+#Synchronise the folders and move the AFS input to DFS input
+rsync --archive --update --compress --progress ${dfs_src}/ ${afs_dst}
+echo "${dfs_src}/ up to date with ${afs_dst}"
+
+rm -rf ${dfs_src}
