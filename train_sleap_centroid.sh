@@ -150,7 +150,7 @@ mkdir -p ${dst_path}
 
 dt=$(date '+%d%m%Y_%H%M%S')
 echo "Starting Training SLEAP"
-sleap-train   --run_name "${dt}_C"  "centroid_config.json" "${src_path}/labels.v004.pkg.slp"
+sleap-train   --run_name "${dt}"  "centroid_config.json" "${src_path}/labels.v004.pkg.slp"
 echo "Command ran successfully!"
 
 

@@ -961,16 +961,17 @@
     "model": {
         "backbone": {
             "leap": null,
-            "unet": null,
-            "hourglass": {
-                "stem_stride": 4,
+            "unet": {
+                "stem_stride": null,
                 "max_stride": 64,
                 "output_stride": 4,
-                "stem_filters": 128,
-                "filters": 256,
-                "filter_increase": 128,
-                "stacks": 3
+                "filters": 24,
+                "filters_rate": 1.5,
+                "middle_block": true,
+                "up_interpolate": true,
+                "stacks": 1
             },
+            "hourglass": null,
             "resnet": null,
             "pretrained_encoder": null
         },
@@ -1076,8 +1077,8 @@
         },
         "early_stopping": {
             "stop_training_on_plateau": true,
-            "plateau_min_delta": 1e-08,
-            "plateau_patience": 10
+            "plateau_min_delta": 5e-09,
+            "plateau_patience": 20
         }
     },
     "outputs": {
@@ -1085,7 +1086,7 @@
         "run_name": "241122_111042",
         "run_name_prefix": "",
         "run_name_suffix": ".centered_instance",
-        "runs_folder": "models",
+        "runs_folder": "/disk/scratch/s2008096/sleap/data/models",
         "tags": [
             ""
         ],
