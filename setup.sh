@@ -18,7 +18,8 @@ fi
 #Ensure that you can use the "run_experiments" wrapper
 #echo 'export PATH=/home/$USER/cluster-scripts/experiments:$PATH' >> ~/.bashrc
 if [ -f "${dfs_dst}/input.tar.bz2" ]; then
-  tar --exclude="._*" -xjvf "${dfs_dst}/input.tar.bz2" -C "${dfs_dst}"
+  tar --exclude="._*" -xjvf "${dfs_dst}/input.tar.bz2" -C "${dfs_dst}/.."
+  rm -rf "${dfs_dst}/input.tar.bz2"
 else
   echo "Could not find '${dfs_dst}/input.tar.bz2'"
 fi
