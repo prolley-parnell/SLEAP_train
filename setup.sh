@@ -22,9 +22,9 @@ if [ ! -d ${afs_dst} ]; then
   mkdir -p ${afs_dst}
 fi
 
-if [ ! -f "${input_folder}/input.tar.bz2" ]; then
+if [ ! -f "${afs_dst}/input.tar.bz2" ]; then
   cd ${input_folder}
-  tar --no-xattrs --exclude="._*" -cjf input.tar.bz2 input
+  tar --no-xattrs --exclude="._*" -cjvf input.tar.bz2 input
   mv input.tar.bz2 ${afs_dst}
 fi
 
