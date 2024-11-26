@@ -5,12 +5,11 @@ scratch_output=$3 #dest_path=${SCRATCH_HOME}/${PROJECT_NAME}/data/output
 models_path=$4 #${SCRATCH_HOME}/${PROJECT_NAME}/data/models
 
 sleap-track \
--m "${models_path}/21112024_1200_C" \
--m "${models_path}/21112024_1200_CI" \
+-m "${models_path}/25112024_124117.centered_instance" \
+-m "${models_path}/25112024_124136.centroid" \
 -o "${scratch_output}/${file_name}.predictions.slp" \
 --no-empty-frames \
 --verbosity rich \
 --batch_size 16 \
---peak_threshold 0.3 \
 --tracking.tracker simple \
 "${scratch_input}/${file_name}.mp4"
