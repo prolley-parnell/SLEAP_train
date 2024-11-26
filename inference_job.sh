@@ -9,6 +9,5 @@ sleap-track \
 --no-empty-frames \
 --verbosity rich \
 --batch_size 16 \
---peak_threshold 0.3 \
 --tracking.tracker simple \
 ${scratch_input}
