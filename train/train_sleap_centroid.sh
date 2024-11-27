@@ -11,12 +11,12 @@
 # EXPT_FILE=experiments.txt  # <- this has a command to run on each line
 # NR_EXPTS=`cat ${EXPT_FILE} | wc -l`
 # MAX_PARALLEL_JOBS=12
-# sbatch --array=1-${NR_EXPTS}%${MAX_PARALLEL_JOBS} array_job.sh $EXPT_FILE
+# sbatch --array=1-${NR_EXPTS}%${MAX_PARALLEL_JOBS} array_track_video.sh $EXPT_FILE
 # ```
 #
 # or, equivalently and as intended, with provided `run_experiment`:
 # ```
-# run_experiment -b array_job.sh -e experiments.txt -m 12
+# run_experiment -b array_track_video.sh -e experiments.txt -m 12
 # ```
 
 

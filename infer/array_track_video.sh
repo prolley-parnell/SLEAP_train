@@ -11,12 +11,12 @@
 # EXPT_FILE=experiments.txt  # <- this has a command to run on each line
 # NR_EXPTS=`cat ${EXPT_FILE} | wc -l`
 # MAX_PARALLEL_JOBS=12
-# sbatch --array=1-${NR_EXPTS}%${MAX_PARALLEL_JOBS} array_job.sh $EXPT_FILE
+# sbatch --array=1-${NR_EXPTS}%${MAX_PARALLEL_JOBS} array_track_video.sh $EXPT_FILE
 # ```
 #
 # or, equivalently and as intended, with provided `run_experiment`:
 # ```
-# run_experiment -b array_job.sh -e experiments.txt -m 12
+# run_experiment -b array_track_video.sh -e experiments.txt -m 12
 # ```
 
 
@@ -48,7 +48,7 @@
 #SBATCH --cpus-per-task=1
 
 # Maximum time for the job to run, format: days-hours:minutes:seconds
-#SBATCH --time=1-04:00:00
+#SBATCH --time=0-04:00:00
 
 # Partition of the cluster to pick nodes from (check `sinfo`)
 #SBATCH --partition=PGR-Standard
@@ -114,28 +114,17 @@ conda activate ${CONDA_ENV_NAME}
 echo "Moving input data to the compute node's scratch space: $SCRATCH_DISK"
 
 project_name=sleap
-# input data directory path on the DFS
-src_path=/home/${USER}/${project_name}/data/input
 
-# input data directory path on the scratch disk of the node
-dst_path=${SCRATCH_HOME}/${project_name}/data/input
+#Move the model folders across too
+# model data directory path on the DFS
+src_path=/home/${USER}/${project_name}/data/models
+
+# model data directory path on the scratch disk of the node
+dst_path=${SCRATCH_HOME}/${project_name}/data/models
 mkdir -p ${dst_path}  # make it if required
-
-# Important notes about rsync:
-# * the --compress option is going to compress the data before transfer to send
-#   as a stream. THIS IS IMPORTANT - transferring many files is very very slow
-# * the final slash at the end of ${src_path}/ is important if you want to send
-#   its contents, rather than the directory itself. For example, without a
-#   final slash here, we would create an extra directory at the destination:
-#       ${SCRATCH_HOME}/project_name/data/input/input
-# * for more about the (endless) rsync options, see the docs:
-#       https://download.samba.org/pub/rsync/rsync.html
 
 rsync --archive --update --compress --progress ${src_path}/ ${dst_path}
 echo "${src_path}/ is up to date with ${dst_path}"
-
-#Unzip the input video file
-tar --exclude="._*" -xjvf "${dst_path}/input.tar.bz2" -C "${SCRATCH_HOME}/${project_name}/data/"
 
 
 # ==============================
@@ -147,12 +136,26 @@ tar --exclude="._*" -xjvf "${dst_path}/input.tar.bz2" -C "${SCRATCH_HOME}/${proj
 # inclusive.
 src_path=${SCRATCH_HOME}/${project_name}/data/input
 dst_path=${SCRATCH_HOME}/${project_name}/data/output
-models_path=/home/${USER}/${project_name}/data/models
+models_path=${SCRATCH_HOME}/${project_name}/data/models
 
 mkdir -p ${dst_path}
 
-echo "Analysing videos in ${src_path}"
-bash inference_job.sh ${src_path} ${dst_path} ${models_path}
+experiment_text_file=$1
+data_file="`sed \"${SLURM_ARRAY_TASK_ID}q;d\" ${experiment_text_file}`"
+
+# input data directory path on the DFS
+src_path=/home/${USER}/${project_name}/data/input
+
+# input data directory path on the scratch disk of the node
+dst_path=${SCRATCH_HOME}/${project_name}/data/input
+mkdir -p ${dst_path}  # make it if required
+
+# Added to move only the video being analysed to the drive, rather than whole input
+rsync --archive --update --compress --progress "${src_path}/${data_file}.mp4" ${dst_path}
+echo "${src_path}/${data_file} is up to date with ${dst_path}"
+
+echo "Analysing ${data_file}"
+bash track_video.sh ${data_file} ${src_path} ${dst_path} ${models_path}
 echo "Command ran successfully!"
 
 
@@ -163,9 +166,9 @@ echo "Command ran successfully!"
 # example, send it back to the DFS with rsync
 
 echo "Moving output data back to DFS"
-#File destinations are different because the output is saved to the same directory as the files.
-src_path=${SCRATCH_HOME}/${project_name}/data/input
-dst_path=/home/${USER}/${project_name}/data/input
+
+src_path=${SCRATCH_HOME}/${project_name}/data/output
+dst_path=/home/${USER}/${project_name}/data/output
 rsync --archive --update --compress --progress ${src_path}/ ${dst_path}
 
 

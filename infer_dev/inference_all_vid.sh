@@ -11,12 +11,12 @@
 # EXPT_FILE=experiments.txt  # <- this has a command to run on each line
 # NR_EXPTS=`cat ${EXPT_FILE} | wc -l`
 # MAX_PARALLEL_JOBS=12
-# sbatch --array=1-${NR_EXPTS}%${MAX_PARALLEL_JOBS} array_job.sh $EXPT_FILE
+# sbatch --array=1-${NR_EXPTS}%${MAX_PARALLEL_JOBS} array_track_video.sh $EXPT_FILE
 # ```
 #
 # or, equivalently and as intended, with provided `run_experiment`:
 # ```
-# run_experiment -b array_job.sh -e experiments.txt -m 12
+# run_experiment -b array_track_video.sh -e experiments.txt -m 12
 # ```
 
 
@@ -133,8 +133,10 @@ mkdir -p ${dst_path}  # make it if required
 
 rsync --archive --update --compress --progress ${src_path}/ ${dst_path}
 echo "${src_path}/ is up to date with ${dst_path}"
-#Extract the input tar containing all the video - This occurs outside of the parallel jobs now.
-#tar --exclude="._*" -xjf "${dst_path}/input.tar.bz2" -C "${dst_path}/"
+
+#Unzip the input video file
+tar --exclude="._*" -xjvf "${dst_path}/input.tar.bz2" -C "${SCRATCH_HOME}/${project_name}/data/"
+
 
 # ==============================
 # Finally, run the experiment!
@@ -145,12 +147,12 @@ echo "${src_path}/ is up to date with ${dst_path}"
 # inclusive.
 src_path=${SCRATCH_HOME}/${project_name}/data/input
 dst_path=${SCRATCH_HOME}/${project_name}/data/output
+models_path=/home/${USER}/${project_name}/data/models
 
 mkdir -p ${dst_path}
 
-dt=$(date '+%d%m%Y_%H%M%S')
-echo "Starting Training SLEAP"
-sleap-train   --run_name "${dt}"  "centered_instance_config.json" "${src_path}/labels.v004.pkg.slp"
+echo "Analysing videos in ${src_path}"
+bash inference_job.sh ${src_path} ${dst_path} ${models_path}
 echo "Command ran successfully!"
 
 
@@ -161,12 +163,9 @@ echo "Command ran successfully!"
 # example, send it back to the DFS with rsync
 
 echo "Moving output data back to DFS"
-#This shouldn't be required if using the config files provided
-#Change the outputs->runs_folder in the json to change the location to which the model is saved.
-#It appears under the name specified in --run_name
-src_path=${SCRATCH_HOME}/${project_name}/data/models
-dst_path=/home/${USER}/${project_name}/data/models
-mkdir -p ${dst_path}
+#File destinations are different because the output is saved to the same directory as the files.
+src_path=${SCRATCH_HOME}/${project_name}/data/input
+dst_path=/home/${USER}/${project_name}/data/input
 rsync --archive --update --compress --progress ${src_path}/ ${dst_path}
 
 

@@ -11,12 +11,12 @@
 # EXPT_FILE=experiments.txt  # <- this has a command to run on each line
 # NR_EXPTS=`cat ${EXPT_FILE} | wc -l`
 # MAX_PARALLEL_JOBS=12
-# sbatch --array=1-${NR_EXPTS}%${MAX_PARALLEL_JOBS} array_job.sh $EXPT_FILE
+# sbatch --array=1-${NR_EXPTS}%${MAX_PARALLEL_JOBS} array_track_video.sh $EXPT_FILE
 # ```
 #
 # or, equivalently and as intended, with provided `run_experiment`:
 # ```
-# run_experiment -b array_job.sh -e experiments.txt -m 12
+# run_experiment -b array_track_video.sh -e experiments.txt -m 12
 # ```
 
 
@@ -48,7 +48,7 @@
 #SBATCH --cpus-per-task=1
 
 # Maximum time for the job to run, format: days-hours:minutes:seconds
-#SBATCH --time=0-04:00:00
+#SBATCH --time=1-04:00:00
 
 # Partition of the cluster to pick nodes from (check `sinfo`)
 #SBATCH --partition=PGR-Standard
@@ -133,18 +133,8 @@ mkdir -p ${dst_path}  # make it if required
 
 rsync --archive --update --compress --progress ${src_path}/ ${dst_path}
 echo "${src_path}/ is up to date with ${dst_path}"
-
-#Move the model folders across too
-# model data directory path on the DFS
-src_path=/home/${USER}/${project_name}/data/models
-
-# model data directory path on the scratch disk of the node
-dst_path=${SCRATCH_HOME}/${project_name}/data/models
-mkdir -p ${dst_path}  # make it if required
-
-rsync --archive --update --compress --progress ${src_path}/ ${dst_path}
-echo "${src_path}/ is up to date with ${dst_path}"
-
+#Extract the input tar containing all the video - This occurs outside of the parallel jobs now.
+#tar --exclude="._*" -xjf "${dst_path}/input.tar.bz2" -C "${dst_path}/"
 
 # ==============================
 # Finally, run the experiment!
@@ -155,15 +145,12 @@ echo "${src_path}/ is up to date with ${dst_path}"
 # inclusive.
 src_path=${SCRATCH_HOME}/${project_name}/data/input
 dst_path=${SCRATCH_HOME}/${project_name}/data/output
-models_path=${SCRATCH_HOME}/${project_name}/data/models
 
 mkdir -p ${dst_path}
 
-experiment_text_file=$1
-data_file="`sed \"${SLURM_ARRAY_TASK_ID}q;d\" ${experiment_text_file}`"
-
-echo "Analysing ${data_file}"
-bash single_job.sh ${data_file} ${src_path} ${dst_path} ${models_path}
+dt=$(date '+%d%m%Y_%H%M%S')
+echo "Starting Training SLEAP"
+sleap-train   --run_name "${dt}"  "centered_instance_config.json" "${src_path}/labels.v004.pkg.slp"
 echo "Command ran successfully!"
 
 
@@ -174,9 +161,12 @@ echo "Command ran successfully!"
 # example, send it back to the DFS with rsync
 
 echo "Moving output data back to DFS"
-
-src_path=${SCRATCH_HOME}/${project_name}/data/output
-dst_path=/home/${USER}/${project_name}/data/output
+#This shouldn't be required if using the config files provided
+#Change the outputs->runs_folder in the json to change the location to which the model is saved.
+#It appears under the name specified in --run_name
+src_path=${SCRATCH_HOME}/${project_name}/data/models
+dst_path=/home/${USER}/${project_name}/data/models
+mkdir -p ${dst_path}
 rsync --archive --update --compress --progress ${src_path}/ ${dst_path}
 
 
