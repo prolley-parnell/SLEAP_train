@@ -116,15 +116,26 @@ echo "Moving input data to the compute node's scratch space: $SCRATCH_DISK"
 project_name=sleap
 
 #Move the model folders across too
+DFS_HOME=/home/${USER}
+
+models="${project_name}/data/models"
+input="${project_name}/data/input"
+output="${project_name}/data/output"
 # model data directory path on the DFS
-src_path=/home/${USER}/${project_name}/data/models
+dfs_models_path="${DFS_HOME}/${models}"
+# input data directory path on the DFS
+dfs_input_path="${DFS_HOME}/${input}"
+dfs_output_path="${DFS_HOME}/${output}"
 
 # model data directory path on the scratch disk of the node
-dst_path=${SCRATCH_HOME}/${project_name}/data/models
-mkdir -p ${dst_path}  # make it if required
+scratch_models_path="${SCRATCH_HOME}/${models}"
+scratch_input_path="${SCRATCH_HOME}/${input}"
+scratch_output_path="${SCRATCH_HOME}/${output}"
 
-rsync --archive --update --compress --progress ${src_path}/ ${dst_path}
-echo "${src_path}/ is up to date with ${dst_path}"
+mkdir -p ${scratch_models_path}  # make it if required
+
+rsync --archive --update --compress --progress ${dfs_models_path}/ ${scratch_models_path}
+echo "${scratch_models_path}/ is up to date with ${dfs_models_path}"
 
 
 # ==============================
@@ -134,28 +145,22 @@ echo "${src_path}/ is up to date with ${dst_path}"
 # ${SLURM_ARRAY_TASK_ID} is simply the number of the job within the array. If
 # you execute `sbatch --array=1:100 ...` the jobs will get numbers 1 to 100
 # inclusive.
-src_path=${SCRATCH_HOME}/${project_name}/data/input
-dst_path=${SCRATCH_HOME}/${project_name}/data/output
-models_path=${SCRATCH_HOME}/${project_name}/data/models
 
-mkdir -p ${dst_path}
+# input data directory path on the scratch disk of the node
+mkdir -p ${scratch_input_path}  # make it if required
+mkdir -p ${scratch_output_path}
 
 experiment_text_file=$1
 data_file="`sed \"${SLURM_ARRAY_TASK_ID}q;d\" ${experiment_text_file}`"
 
-# input data directory path on the DFS
-src_path=/home/${USER}/${project_name}/data/input
 
-# input data directory path on the scratch disk of the node
-dst_path=${SCRATCH_HOME}/${project_name}/data/input
-mkdir -p ${dst_path}  # make it if required
 
 # Added to move only the video being analysed to the drive, rather than whole input
-rsync --archive --update --compress --progress "${src_path}/${data_file}.mp4" ${dst_path}
-echo "${src_path}/${data_file} is up to date with ${dst_path}"
+rsync --archive --update --compress --progress "${dfs_input_path}/${data_file}.mp4" ${scratch_input_path}
+echo "${dfs_input_path}/${data_file} is up to date with ${scratch_input_path}"
 
 echo "Analysing ${data_file}"
-bash track_video.sh ${data_file} ${src_path} ${dst_path} ${models_path}
+bash track_video.sh ${data_file} ${scratch_input_path} ${scratch_output_path} ${scratch_models_path}
 echo "Command ran successfully!"
 
 
@@ -167,9 +172,7 @@ echo "Command ran successfully!"
 
 echo "Moving output data back to DFS"
 
-src_path=${SCRATCH_HOME}/${project_name}/data/output
-dst_path=/home/${USER}/${project_name}/data/output
-rsync --archive --update --compress --progress ${src_path}/ ${dst_path}
+rsync --archive --update --compress --progress ${scratch_output_path}/ ${dfs_output_path}
 
 
 # =========================
