@@ -67,6 +67,7 @@ fi
 #echo 'export PATH=/home/$USER/cluster-scripts/experiments:$PATH' >> ~/.bashrc
 if [ -f "${dfs_dst}/input.tar.bz2" ]; then
   tar --exclude="._*" -xjvf "${dfs_dst}/input.tar.bz2" -C "${project_path}/data"
+  rm -rf "${dfs_dst}/input.tar.bz2"
 else
   echo "Could not find '${dfs_dst}/input.tar.bz2'"
 fi
