@@ -115,11 +115,11 @@ echo "Moving input data to the compute node's scratch space: $SCRATCH_DISK"
 
 project_name=sleap
 # input data directory path on the DFS
-src_path=/home/${USER}/${project_name}/data/input
+dfs_input_path=/home/${USER}/${project_name}/data/input
 
 # input data directory path on the scratch disk of the node
-dst_path=${SCRATCH_HOME}/${project_name}/data/input
-mkdir -p ${dst_path}  # make it if required
+scratch_input_path=${SCRATCH_HOME}/${project_name}/data/input
+mkdir -p ${scratch_input_path}  # make it if required
 
 # Important notes about rsync:
 # * the --compress option is going to compress the data before transfer to send
@@ -131,8 +131,8 @@ mkdir -p ${dst_path}  # make it if required
 # * for more about the (endless) rsync options, see the docs:
 #       https://download.samba.org/pub/rsync/rsync.html
 
-rsync --archive --update --compress --progress ${src_path}/ ${dst_path}
-echo "${src_path}/ is up to date with ${dst_path}"
+rsync --archive --update --compress --progress ${dfs_input_path}/ ${scratch_input_path}
+echo "${scratch_input_path}/ is up to date with ${dfs_input_path}"
 #Extract the input tar containing all the video - This occurs outside of the parallel jobs now.
 #tar --exclude="._*" -xjf "${dst_path}/input.tar.bz2" -C "${dst_path}/"
 
@@ -143,14 +143,13 @@ echo "${src_path}/ is up to date with ${dst_path}"
 # ${SLURM_ARRAY_TASK_ID} is simply the number of the job within the array. If
 # you execute `sbatch --array=1:100 ...` the jobs will get numbers 1 to 100
 # inclusive.
-src_path=${SCRATCH_HOME}/${project_name}/data/input
-dst_path=${SCRATCH_HOME}/${project_name}/data/output
+scratch_model_path=${SCRATCH_HOME}/${project_name}/data/models
 
-mkdir -p ${dst_path}
+mkdir -p ${scratch_model_path}
 
 dt=$(date '+%d%m%Y_%H%M%S')
 echo "Starting Training SLEAP"
-sleap-train   --run_name "${dt}"  "centroid_config.json" "${src_path}/labels.v005.pkg.slp"
+sleap-train   --run_name "${dt}"  "centroid_config.json" "${scratch_input_path}/labels.v005.pkg.slp"
 echo "Command ran successfully!"
 
 
@@ -162,10 +161,10 @@ echo "Command ran successfully!"
 
 echo "Moving output data back to DFS"
 
-src_path=${SCRATCH_HOME}/${project_name}/data/models
-dst_path=/home/${USER}/${project_name}/data/models
-mkdir -p ${dst_path}
-rsync --archive --update --compress --progress ${src_path}/ ${dst_path}
+
+dfs_model_path=/home/${USER}/${project_name}/data/models
+mkdir -p ${dfs_model_path}
+rsync --archive --update --compress --progress ${scratch_model_path}/ ${dfs_model_path}
 
 
 # =========================
