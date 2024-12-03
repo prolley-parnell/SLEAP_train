@@ -149,7 +149,7 @@ mkdir -p ${scratch_model_path}
 
 dt=$(date '+%d%m%Y_%H%M%S')
 echo "Starting Training SLEAP"
-sleap-train   --run_name "${dt}"  "centered_instance_config.json" "${scratch_input_path}/labels.v005.pkg.slp"
+sleap-train   --run_name "${dt}"  "centered_instance_config.json" "${scratch_input_path}/labels.v006.pkg.slp"
 echo "Command ran successfully!"
 
 
