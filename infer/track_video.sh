@@ -5,8 +5,8 @@ scratch_output=$3 #dest_path=${SCRATCH_HOME}/${PROJECT_NAME}/data/output
 models_path=$4 #${SCRATCH_HOME}/${PROJECT_NAME}/data/models
 
 sleap-track \
--m "${models_path}/25112024_124117.centered_instance" \
--m "${models_path}/25112024_124136.centroid" \
+-m "${models_path}/28112024_160236.centered_instance" \
+-m "${models_path}/28112024_160236.centroid" \
 -o "${scratch_output}/${file_name}.predictions.slp" \
 --no-empty-frames \
 --verbosity rich \
